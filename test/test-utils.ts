@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { prismaClient } from "./../src/application/database";
 
@@ -19,5 +20,17 @@ export class UserTest {
         token: "test",
       },
     });
+  }
+  static async get(): Promise<User> {
+    const user = await prismaClient.user.findFirst({
+      where: {
+        username: "test",
+      },
+    });
+    if (!user) {
+      throw new Error("User is not found");
+    }
+
+    return user;
   }
 }

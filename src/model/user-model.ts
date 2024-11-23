@@ -20,6 +20,11 @@ export type LoginUserRequest = {
   password: string;
 };
 
+export type UpdateUserRequest = {
+  name?: string;
+  password?: string;
+};
+
 // membuat export function respon kepada user yaitu name, dan username
 export function toUserResponse(user: User): UserResponse {
   return {
