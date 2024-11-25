@@ -1,3 +1,4 @@
+import { ContactController } from "../controller/contact-controller";
 import { UserController } from "./../controller/user-controller";
 import { authMiddleware } from "./../middleware/auth-middleware";
 import express from "express";
@@ -9,3 +10,6 @@ apiRouter.use(authMiddleware);
 apiRouter.get("/api/users/current", UserController.get);
 apiRouter.patch("/api/users/current", UserController.update);
 apiRouter.delete("/api/users/current", UserController.logout);
+
+// CONTACT API
+apiRouter.post("/api/contacts", ContactController.create);
