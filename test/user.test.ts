@@ -3,7 +3,6 @@ import { logger } from "../src/application/logging";
 import { web } from "./../src/application/web";
 import supertest from "supertest";
 import { UserTest } from "./test-utils";
-import { prismaClient } from "../src/application/database";
 
 describe("POST /api/users", () => {
   afterEach(async () => {
