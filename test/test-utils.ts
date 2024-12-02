@@ -1,5 +1,5 @@
 import { prismaClient } from "./../src/application/database";
-import { User, Contact } from "@prisma/client";
+import { User, Contact, Address } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { ResponseError } from "../src/error/response.error";
 
@@ -65,5 +65,43 @@ export class ContactTest {
       throw new Error("Contact not found");
     }
     return contact;
+  }
+}
+
+export class AddressTest {
+  static async deleteAll() {
+    await prismaClient.address.deleteMany({
+      where: {
+        contact: {
+          username: "test",
+        },
+      },
+    });
+  }
+  static async create() {
+    const contact = await ContactTest.get();
+    await prismaClient.address.create({
+      data: {
+        contact_id: contact.id,
+        street: "Jalan test",
+        city: "city test",
+        province: "province test",
+        country: "country test",
+        postal_code: "1111",
+      },
+    });
+  }
+  static async get(): Promise<Address> {
+    const address = await prismaClient.address.findFirst({
+      where: {
+        contact: {
+          username: "test",
+        },
+      },
+    });
+    if (!address) {
+      throw new Error("address not found");
+    }
+    return address;
   }
 }
