@@ -2,7 +2,7 @@ import { Address, User } from "@prisma/client";
 import {
   AddressResponse,
   CreateAddressRequest,
-  getAddressRequest,
+  GetAddressRequest,
   toAddressResponse,
   UpdateAddressRequest,
 } from "../model/address-model";
@@ -19,8 +19,8 @@ export class AddressServices {
   ): Promise<Address> {
     const address = await prismaClient.address.findFirst({
       where: {
-        id: addressId,
         contact_id: contactId,
+        id: addressId,
       },
     });
     if (!address) {
@@ -50,7 +50,7 @@ export class AddressServices {
 
   static async get(
     user: User,
-    request: getAddressRequest
+    request: GetAddressRequest
   ): Promise<AddressResponse> {
     const getRequest = Validation.validate(AddressValidation.GET, request);
 
@@ -58,9 +58,9 @@ export class AddressServices {
       user.username,
       request.contact_id
     );
-    const address = await AddressServices.checkAddressMustExist(
-      getRequest.id,
-      getRequest.contact_id
+    const address = await this.checkAddressMustExist(
+      getRequest.contact_id,
+      getRequest.id
     );
 
     return toAddressResponse(address);
@@ -79,8 +79,8 @@ export class AddressServices {
       request.contact_id
     );
     await AddressServices.checkAddressMustExist(
-      updateRequest.id,
-      updateRequest.contact_id
+      updateRequest.contact_id,
+      updateRequest.id
     );
     const address = await prismaClient.address.update({
       where: {

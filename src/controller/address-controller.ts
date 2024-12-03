@@ -2,10 +2,11 @@ import { NextFunction, Response } from "express";
 import { UserRequest } from "../type/user-request";
 import {
   CreateAddressRequest,
-  getAddressRequest,
+  GetAddressRequest,
   UpdateAddressRequest,
 } from "../model/address-model";
 import { AddressServices } from "../services/address-service";
+import { logger } from "../application/logging";
 
 export class AddressController {
   static async create(req: UserRequest, res: Response, next: NextFunction) {
@@ -23,7 +24,7 @@ export class AddressController {
   }
   static async get(req: UserRequest, res: Response, next: NextFunction) {
     try {
-      const request: getAddressRequest = {
+      const request: GetAddressRequest = {
         id: Number(req.params.addressId),
         contact_id: Number(req.params.contactId),
       };
@@ -39,8 +40,9 @@ export class AddressController {
   static async update(req: UserRequest, res: Response, next: NextFunction) {
     try {
       const request: UpdateAddressRequest = req.body as UpdateAddressRequest;
-      request.id = Number(req.params.addressId);
       request.contact_id = Number(req.params.contactId);
+      request.id = Number(req.params.addressId);
+
       const response = await AddressServices.update(req.user!, request);
       res.status(200).json({
         data: response,

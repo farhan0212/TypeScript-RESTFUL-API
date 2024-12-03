@@ -28,7 +28,7 @@ export type UpdateAddressRequest = {
   postal_code: string;
 };
 
-export type getAddressRequest = {
+export type GetAddressRequest = {
   contact_id: number;
   id: number;
 };

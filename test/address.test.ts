@@ -111,15 +111,16 @@ describe("GET to /api/contacts/:contactId(\\d+)/addresses/:addressId", () => {
 
   it("should be able to get address", async () => {
     const contact = await ContactTest.get();
+    logger.debug(contact);
     const address = await AddressTest.get();
+    logger.debug(address);
     const response = await supertest(web)
       .get(`/api/contacts/${contact.id}/addresses/${address.id}`)
       .set("X-API-TOKEN", "test");
 
     logger.debug(response.body);
-
     expect(response.status).toBe(200);
-    expect(response.body.data.id).toBeDefined;
+    expect(response.body.data.id).toBeDefined();
     expect(response.body.data.street).toBe(address.street);
     expect(response.body.data.city).toBe(address.city);
     expect(response.body.data.province).toBe(address.province);
@@ -169,6 +170,7 @@ describe("PUT /api/contacts/:contactId/addresses/:addressId", () => {
     const address = await AddressTest.get();
     const response = await supertest(web)
       .put(`/api/contacts/${contact.id}/addresses/${address.id}`)
+
       .set("X-API-TOKEN", "test")
       .send({
         street: "pangjay",

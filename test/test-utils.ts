@@ -1,7 +1,6 @@
 import { prismaClient } from "./../src/application/database";
 import { User, Contact, Address } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { ResponseError } from "../src/error/response.error";
 
 export class UserTest {
   static async delete() {
@@ -84,10 +83,10 @@ export class AddressTest {
       data: {
         contact_id: contact.id,
         street: "Jalan test",
-        city: "city test",
-        province: "province test",
-        country: "country test",
-        postal_code: "1111",
+        city: "Kota test",
+        province: "Provinsi test",
+        country: "Indonesia",
+        postal_code: "11111",
       },
     });
   }
@@ -99,9 +98,11 @@ export class AddressTest {
         },
       },
     });
+
     if (!address) {
-      throw new Error("address not found");
+      throw new Error("Address is not found");
     }
+
     return address;
   }
 }
