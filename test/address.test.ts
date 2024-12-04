@@ -188,4 +188,56 @@ describe("PUT /api/contacts/:contactId/addresses/:addressId", () => {
     expect(response.body.data.country).toBe("indonesia");
     expect(response.body.data.postal_code).toBe("1234312");
   });
+
+  it("should unable to put data coz wrong address id", async () => {
+    const contact = await ContactTest.get();
+    const address = await AddressTest.get();
+    const response = await supertest(web)
+      .put(`/api/contacts/${contact.id}/addresses/${address.id + 1}`)
+
+      .set("X-API-TOKEN", "test")
+      .send({
+        street: "pangjay",
+        city: "mabes",
+        province: "jekardah",
+        country: "indonesia",
+        postal_code: "1234312",
+      });
+    logger.debug(response.body);
+    expect(response.status).toBe(404);
+    expect(response.body.errors).toBeDefined();
+  });
+  it("should unable to put data coz wrong contact id", async () => {
+    const contact = await ContactTest.get();
+    const address = await AddressTest.get();
+    const response = await supertest(web)
+      .put(`/api/contacts/${contact.id + 1}/addresses/${address.id}`)
+
+      .set("X-API-TOKEN", "test")
+      .send({
+        street: "pangjay",
+        city: "mabes",
+        province: "jekardah",
+        country: "indonesia",
+        postal_code: "1234312",
+      });
+    logger.debug(response.body);
+    expect(response.status).toBe(404);
+    expect(response.body.errors).toBeDefined();
+  });
+  it("should unable to put data coz user doesn't input needed field", async () => {
+    const contact = await ContactTest.get();
+    const address = await AddressTest.get();
+    const response = await supertest(web)
+      .put(`/api/contacts/${contact.id}/addresses/${address.id}`)
+
+      .set("X-API-TOKEN", "test")
+      .send({
+        country: "",
+        postal_code: "",
+      });
+    logger.debug(response.body);
+    expect(response.status).toBe(400);
+    expect(response.body.errors).toBeDefined();
+  });
 });

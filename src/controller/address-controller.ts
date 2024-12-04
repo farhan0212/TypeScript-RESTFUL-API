@@ -51,4 +51,15 @@ export class AddressController {
       next(e);
     }
   }
+  static async delete(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const addressId = Number(req.params.addressId);
+      await AddressServices.delete(req.user!, addressId);
+      res.status(200).json({
+        data: "ok",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

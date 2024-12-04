@@ -1,4 +1,4 @@
-import { Address, User } from "@prisma/client";
+import { Address, User, Contact } from "@prisma/client";
 import {
   AddressResponse,
   CreateAddressRequest,
@@ -90,5 +90,18 @@ export class AddressServices {
       data: updateRequest,
     });
     return toAddressResponse(address);
+  }
+  static async delete(
+    contact: Contact,
+    address: Address
+  ): Promise<AddressResponse> {
+    await this.checkAddressMustExist(contact.id, address.id);
+    await AddressServices.checkAddressMustExist(contact.id, address.id);
+    const result = await prismaClient.address.delete({
+      where: {
+        id: address.id,
+      },
+    });
+    return toAddressResponse(result);
   }
 }
