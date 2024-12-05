@@ -3,6 +3,7 @@ import { UserRequest } from "../type/user-request";
 import {
   CreateAddressRequest,
   GetAddressRequest,
+  RemoveAddressRequest,
   UpdateAddressRequest,
 } from "../model/address-model";
 import { AddressServices } from "../services/address-service";
@@ -51,15 +52,31 @@ export class AddressController {
       next(e);
     }
   }
-  static async delete(req: UserRequest, res: Response, next: NextFunction) {
+  static async remove(req: UserRequest, res: Response, next: NextFunction) {
     try {
-      const addressId = Number(req.params.addressId);
-      await AddressServices.delete(req.user!, addressId);
+      const request: RemoveAddressRequest = {
+        id: Number(req.params.addressId),
+        contact_id: Number(req.params.contactId),
+      };
+
+      const response = await AddressServices.remove(req.user!, request);
       res.status(200).json({
-        data: "ok",
+        data: "OK",
       });
-    } catch (error) {
-      next(error);
+    } catch (e) {
+      next(e);
+    }
+  }
+  static async list(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const contactId = Number(req.params.contactId);
+
+      const response = await AddressServices.list(req.user!, contactId);
+      res.status(200).json({
+        data: response,
+      });
+    } catch (e) {
+      next(e);
     }
   }
 }

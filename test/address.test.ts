@@ -77,7 +77,7 @@ describe("POST to /api/contacts/:contactId(\\d+)/addresses", () => {
       });
     logger.debug(response.body);
     expect(response.status).toBe(400);
-    expect(response.body.error).toBeDefined();
+    expect(response.body.errors).toBeDefined();
   });
   it("shouldn't be able to create address coz wrong data type", async () => {
     const contact = await ContactTest.get();
@@ -239,5 +239,89 @@ describe("PUT /api/contacts/:contactId/addresses/:addressId", () => {
     logger.debug(response.body);
     expect(response.status).toBe(400);
     expect(response.body.errors).toBeDefined();
+  });
+});
+describe("DELETE /api/contacts/:contactId/addresses/:addressId", () => {
+  beforeEach(async () => {
+    await UserTest.create();
+    await ContactTest.create();
+    await AddressTest.create();
+  });
+
+  afterEach(async () => {
+    await AddressTest.deleteAll();
+    await ContactTest.deleteAll();
+    await UserTest.delete();
+  });
+
+  it("should be able to delete address", async () => {
+    const contact = await ContactTest.get();
+    const address = await AddressTest.get();
+    const response = await supertest(web)
+      .delete(`/api/contacts/${contact.id}/addresses/${address.id}`)
+      .set("X-API-TOKEN", "test");
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data).toBe("OK");
+  });
+  it("should unable to delete address coz wrong contact id", async () => {
+    const contact = await ContactTest.get();
+    const address = await AddressTest.get();
+    const response = await supertest(web)
+      .delete(`/api/contacts/${contact.id + 1}/addresses/${address.id}`)
+      .set("X-API-TOKEN", "test");
+
+    logger.debug(response.body);
+    expect(response.status).toBe(404);
+    expect(response.body.errors).toBeDefined();
+  });
+
+  it("should unable to delete address coz wrong address id", async () => {
+    const contact = await ContactTest.get();
+    const address = await AddressTest.get();
+    const response = await supertest(web)
+      .delete(`/api/contacts/${contact.id}/addresses/${address.id + 1}`)
+      .set("X-API-TOKEN", "test");
+
+    logger.debug(response.body);
+    expect(response.status).toBe(404);
+    expect(response.body.errors).toBeDefined();
+  });
+});
+
+describe('List"/api/contacts/:contactId(\\d+)/addresses/:addressId(\\d+)"', () => {
+  beforeEach(async () => {
+    await UserTest.create();
+    await ContactTest.create();
+    await AddressTest.create();
+  });
+
+  afterEach(async () => {
+    await AddressTest.deleteAll();
+    await ContactTest.deleteAll();
+    await UserTest.delete();
+  });
+  it("should unable to list address coz wrong contactId", async () => {
+    const contact = await ContactTest.get();
+
+    const response = await supertest(web)
+      .get(`/api/contacts/${contact.id + 1}/addresses`)
+      .set("X-API-TOKEN", "test");
+
+    logger.debug(response.body);
+    expect(response.status).toBe(404);
+    expect(response.body.errors).toBeDefined();
+  });
+  it("should be to list address", async () => {
+    const contact = await ContactTest.get();
+
+    const response = await supertest(web)
+      .get(`/api/contacts/${contact.id}/addresses`)
+      .set("X-API-TOKEN", "test");
+
+    logger.debug(response.body);
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(1);
   });
 });
